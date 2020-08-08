@@ -2,6 +2,7 @@ package sample;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TableView;
@@ -38,7 +39,7 @@ public class Controller {
         try {
             dialog.getDialogPane().setContent(fxmlLoader.load());
 
-        } catch (IOException e) {
+        } catch(IOException e) {
             System.out.println("Couldn't load the dialog");
             e.printStackTrace();
             return;
@@ -48,8 +49,24 @@ public class Controller {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
 
         Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        if(result.isPresent() && result.get() == ButtonType.OK) {
+            ContactController contactController = fxmlLoader.getController();
+            Contact newContact = contactController.getNewContact();
+            data.addContact(newContact);
+            data.saveContacts();
+        }
+    }
 
+    @FXML
+    public void showEditContactDialog() {
+        Contact selectedContact = contactsTable.getSelectionModel().getSelectedItem();
+        if (selectedContact == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No Contact Selected");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select the contact you want to edit.");
+            alert.showAndWait();
+            return;
         }
     }
 }
